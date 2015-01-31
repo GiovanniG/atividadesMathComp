@@ -1,0 +1,79 @@
+#include <stdio.h>
+#include <math.h>
+
+// Implementação do algoritmo d a secante segundo consta na página
+// 76 do livro Cálculo Numérico de Ruggiero e Lopes
+
+// Função cuja raiz deve ser determinada
+float f(float x)
+{
+    return x*log(x)-1;
+}
+
+int main()
+{
+    // declaração de variáveis
+    float epsilon; // precisão desejada
+    float x0; // aproximação inicial
+    float x1; // aproximação inicial
+    float x2; // aproximação calculada a partir das aproximações iniciais
+    float largura; // distância entre aproximações
+    int maximoIteracoes = 100; // limite de segurança na quantidade de iterações
+    int iteracoes = 0;
+
+    // peço os dados ao usuário
+    printf("Digite a primeira aproximação inicial:\n");
+    scanf("%f",&x0);
+    printf("Digite a segunda aproximação inicial:\n");
+    scanf("%f",&x1);
+    printf("Digite a precisão requerida:\n");
+    scanf("%f",&epsilon);
+
+    // atualizo o valor da largura do intervalo
+    largura = fabs(x0 - x1);
+
+    // calculo a abcisa da aproximação calculada
+    x2 = x1 - f(x1) / (f(x1)-f(x0)) * (x1 - x0);
+
+    // itero até o intervalo ter uma largura menor que a precisao desejada
+    while(largura > epsilon)
+    {
+        // calculo a abcisa da aproximação calculada
+        x2 = x1 - f(x1) / (f(x1)-f(x0)) * (x1 - x0);
+
+        // calculo o valor da função na aproximação calculada
+        float fx2 = f(x2);
+
+        // confiro se x2 é a raiz buscada
+        if(fx2 == 0.0){
+            // termino o while pois já encontrei o valor buscado
+            break;
+        }
+
+        // se a aproximação calculada não é a raiz buscada, então vou
+        // usar x1 e x2 como as aproximações a serem usadas na próxima iteração
+        x0 = x1;
+        x1 = x2;
+
+        // atualizo o valor da largura do intervalo
+        largura = fabs(x0 - x1);
+
+        // atualizo o contador de interações
+        iteracoes = iteracoes + 1;
+
+        // confiro se cheguei ao limite de segurança de iterações
+        if( iteracoes >= maximoIteracoes )
+        {
+            // cheguei ao limite: aviso o usuário e termino o while
+            printf("Limite de iterações (=%d) atingido!!!\n\n", maximoIteracoes);
+            break;
+        }
+
+    }
+
+    // informo ao usuário o valor estimado para a raiz usando x2 como melhor aproximação
+    printf("Após %d iterações foi obtido x = %.10f e f(x) = %.10f\n", iteracoes, x2, f(x2));
+
+    // termino a execução do programa
+    return 0;
+}
